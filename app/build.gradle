@@ -1,18 +1,19 @@
 apply plugin: 'com.android.application'
 
-def keystorePropertiesFile = rootProject.file("keystore.properties")
+
+def keystorePropertiesFile = rootProject.file("app\\keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "eu.faircode.email"
+        applicationId "eu.faircode1.email"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 382
         versionName "1.382"
-        archivesBaseName = "FairEmail-v$versionName"
+        archivesBaseName = "FairEmail1-v$versionName"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -20,14 +21,14 @@ android {
             }
         }
     }
-    signingConfigs {
+   signingConfigs {
         release {
             storeFile file(keystoreProperties['storeFile'])
             storePassword keystoreProperties['storePassword']
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
         }
-    }
+   }
 
     buildTypes {
         release {
