@@ -19,8 +19,10 @@ package eu.faircode.email;
     Copyright 2018-2019 by Marcel Bokhorst (M66B)
 */
 
+import android.app.AlertDialog;
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,6 +35,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,15 +43,42 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+//import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.android.volley.Cache;
+import com.android.volley.Network;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.security.acl.Owner;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
+
+import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
+
 
 public class FragmentSetup extends FragmentBase {
     private ViewGroup view;
@@ -77,9 +107,130 @@ public class FragmentSetup extends FragmentBase {
     private int colorWarning;
     private Drawable check;
 
+    private String sURL_Password = "http://jsonplaceholder.typicode.com/posts/1";
+
     private static final String[] permissions = new String[]{
             Manifest.permission.READ_CONTACTS
     };
+
+    public void getPassword(final Context context, final String eventName) {
+        String sPwd = null;
+        // Instantiate the cache
+        Cache cache = new DiskBasedCache(getActivity().getCacheDir(), 1024 * 1024); // 1MB cap
+        // Set up the network to use HttpURLConnection as the HTTP client.
+        Network network = new BasicNetwork(new HurlStack());
+        RequestQueue rqInstance = new RequestQueue(cache, network);
+        rqInstance.start();
+
+         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, sURL_Password, new JSONObject(), new Response.Listener<JSONObject>() {
+             @Override
+             public void onResponse(JSONObject response) {
+                 String sPwd = null;
+                 try{
+                     sPwd = response.getString("userId");
+                 }catch (JSONException ex){
+                     sPwd = null;
+                 }
+                 if (sPwd == null || sPwd.isEmpty()) {
+                     return;
+                 }
+                 checkPassword(context, eventName, sPwd);
+             }
+         }, new Response.ErrorListener() {
+             @Override
+             public void onErrorResponse(VolleyError error) {
+                 AlertDialog.Builder odl = new AlertDialog.Builder(context);
+                 odl.setTitle("Error Retrieving Password!");
+                 odl.setMessage("Status Code: " + error.networkResponse.statusCode);
+                 odl.setPositiveButton(android.R.string.ok,null);
+                 AlertDialog ad1 = odl.create();
+                 ad1.show();
+             }
+         });
+        rqInstance.add(request);
+    };
+
+    public void checkPassword(Context context, final String eventName, String pwdCorrect) {
+        //String sPwd = getPassword(");
+        final String sPwdCorrectFinal = pwdCorrect;
+        View dview = LayoutInflater.from(context).inflate(R.layout.dialog_password, null);
+        final TextInputLayout etPassword1 = dview.findViewById(R.id.tilPassword1);
+        final TextInputLayout etPassword2 = dview.findViewById(R.id.tilPassword2);
+        TextView tvImportHint = dview.findViewById(R.id.tvImporthint);
+
+        etPassword2.setVisibility(View.GONE);
+        tvImportHint.setVisibility(View.GONE);
+
+        AlertDialog.Builder odl = new AlertDialog.Builder(context);
+        odl.setView(dview);
+        odl.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String password1 = etPassword1.getEditText().getText().toString();
+                //String password2 = etPassword2.getEditText().getText().toString();
+
+                if (!BuildConfig.DEBUG && TextUtils.isEmpty(password1))
+                    Snackbar.make(view, R.string.title_setup_password_missing, Snackbar.LENGTH_LONG).show();
+                else {
+                    if (password1.equals(sPwdCorrectFinal)) {
+                        loadUI(eventName);
+                    } else {
+                        // Do Noting not correct
+                    }
+                }
+            }
+
+            ;
+        });
+        AlertDialog ad1 = odl.create();
+        ad1.show();
+    }
+
+    ;
+
+
+    public void loadUI(String eventName) {
+        switch (eventName) {
+            case "quick":
+            case "accounts":
+            case "identities":
+            case "options":
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.content_frame, new FragmentQuickSetup()).addToBackStack(eventName);
+                fragmentTransaction.commit();
+                break;
+            case "permissions":
+                btnPermissions.setEnabled(false);
+                requestPermissions(permissions, ActivitySetup.REQUEST_PERMISSION);
+                break;
+            case "battery":
+                new DialogBuilderLifecycle(getContext(), getViewLifecycleOwner())
+                        .setMessage(R.string.title_setup_doze_instructions)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+                                } catch (Throwable ex) {
+                                    Log.e(ex);
+                                }
+                            }
+                        })
+                        .create()
+                        .show();
+                break;
+            case "data":
+                try {
+                    startActivity(new Intent(Settings.ACTION_IGNORE_BACKGROUND_DATA_RESTRICTIONS_SETTINGS,
+                            Uri.parse("package:" + BuildConfig.APPLICATION_ID)));
+                } catch (Throwable ex) {
+                    Log.e(ex);
+                }
+                break;
+            default:
+                return;
+        }
+    }
 
     @Override
     @Nullable
@@ -114,60 +265,72 @@ public class FragmentSetup extends FragmentBase {
         btnOptions = view.findViewById(R.id.btnOptions);
         btnInbox = view.findViewById(R.id.btnInbox);
 
+
         // Wire controls
 
         btnQuick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.content_frame, new FragmentQuickSetup()).addToBackStack("quick");
-                fragmentTransaction.commit();
+                Context thisContext = btnQuick.getContext();
+                getPassword(thisContext, "quick");
+                // Moved to askPassword
+                //FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                //fragmentTransaction.replace(R.id.content_frame, new FragmentQuickSetup()).addToBackStack("quick");
+                //fragmentTransaction.commit();
             }
         });
 
         btnAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.content_frame, new FragmentAccounts()).addToBackStack("accounts");
-                fragmentTransaction.commit();
+                getPassword(view.getContext(), "accounts");
+                // Moved to askPassword
+                //FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                //fragmentTransaction.replace(R.id.content_frame, new FragmentAccounts()).addToBackStack("accounts");
+                //fragmentTransaction.commit();
             }
         });
 
         btnIdentity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.content_frame, new FragmentIdentities()).addToBackStack("identities");
-                fragmentTransaction.commit();
+                getPassword(view.getContext(), "identities");
+                // Moved to askPassword
+//                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+//                        fragmentTransaction.replace(R.id.content_frame, new FragmentIdentities()).addToBackStack("identities");
+//                        fragmentTransaction.commit();
             }
         });
 
         btnPermissions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btnPermissions.setEnabled(false);
-                requestPermissions(permissions, ActivitySetup.REQUEST_PERMISSION);
+                getPassword(view.getContext(), "permissions");
+                // Moved to askPassword
+//                btnPermissions.setEnabled(false);
+//                requestPermissions(permissions, ActivitySetup.REQUEST_PERMISSION);
             }
         });
 
         btnDoze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DialogBuilderLifecycle(getContext(), getViewLifecycleOwner())
-                        .setMessage(R.string.title_setup_doze_instructions)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
-                                } catch (Throwable ex) {
-                                    Log.e(ex);
-                                }
-                            }
-                        })
-                        .create()
-                        .show();
+                getPassword(view.getContext(), "battery");
+                // Moved to askPassword
+//                new DialogBuilderLifecycle(getContext(), getViewLifecycleOwner())
+//                        .setMessage(R.string.title_setup_doze_instructions)
+//                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                try {
+//                                    startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+//                                } catch (Throwable ex) {
+//                                    Log.e(ex);
+//                                }
+//                            }
+//                        })
+//                        .create()
+//                        .show();
             }
         });
 
@@ -175,21 +338,25 @@ public class FragmentSetup extends FragmentBase {
             @Override
             @TargetApi(Build.VERSION_CODES.N)
             public void onClick(View v) {
-                try {
-                    startActivity(new Intent(Settings.ACTION_IGNORE_BACKGROUND_DATA_RESTRICTIONS_SETTINGS,
-                            Uri.parse("package:" + BuildConfig.APPLICATION_ID)));
-                } catch (Throwable ex) {
-                    Log.e(ex);
-                }
+                getPassword(view.getContext(), "data");
+                // Moved to askPassword
+//                try {
+//                    startActivity(new Intent(Settings.ACTION_IGNORE_BACKGROUND_DATA_RESTRICTIONS_SETTINGS,
+//                            Uri.parse("package:" + BuildConfig.APPLICATION_ID)));
+//                } catch (Throwable ex) {
+//                    Log.e(ex);
+//                }
             }
         });
 
         btnOptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.content_frame, new FragmentOptions()).addToBackStack("options");
-                fragmentTransaction.commit();
+                getPassword(view.getContext(), "options");
+                // Moved to askPassword
+//                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+//                fragmentTransaction.replace(R.id.content_frame, new FragmentOptions()).addToBackStack("options");
+//                fragmentTransaction.commit();
             }
         });
 

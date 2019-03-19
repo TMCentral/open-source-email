@@ -19,6 +19,7 @@ package eu.faircode.email;
     Copyright 2018-2019 by Marcel Bokhorst (M66B)
 */
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,8 +32,14 @@ import java.util.List;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+//TODO: Remove this for password Fragment
+import android.widget.Toast;
+import android.content.DialogInterface;
 
 public class ActivityMain extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener, SharedPreferences.OnSharedPreferenceChangeListener {
+    //TODO: Remove this for password Fragment
+    private AlertDialog adBuilder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getSupportFragmentManager().addOnBackStackChangedListener(this);
@@ -47,6 +54,7 @@ public class ActivityMain extends AppCompatActivity implements FragmentManager.O
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
 
+
         if (prefs.getBoolean("eula", false)) {
             super.onCreate(savedInstanceState);
             new SimpleTask<List<EntityAccount>>() {
@@ -57,9 +65,24 @@ public class ActivityMain extends AppCompatActivity implements FragmentManager.O
 
                 @Override
                 protected void onExecuted(Bundle args, List<EntityAccount> accounts) {
-                    if (accounts == null || accounts.size() == 0)
+                    if (accounts == null || accounts.size() == 0){
+                        //TODO: Remove this for password Fragment
+                        adBuilder  = new AlertDialog.Builder(ActivityMain.this).create();
+                        adBuilder.setTitle("Please Provide Password");
+                        adBuilder.setMessage("Test this!");
+                        adBuilder.setIcon(R.drawable.baseline_navigate_next_24);
+                        adBuilder.setButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,int which)
+                            {
+                                // Write your code here to execute after dialog    closed
+                                Toast.makeText(getApplicationContext(),"You clicked on OK", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        adBuilder.show();
+
                         startActivity(new Intent(ActivityMain.this, ActivitySetup.class));
-                    else {
+
+                    }else {
                         startActivity(new Intent(ActivityMain.this, ActivityView.class));
                         ServiceSynchronize.boot(ActivityMain.this);
                         ServiceSend.boot(ActivityMain.this);
