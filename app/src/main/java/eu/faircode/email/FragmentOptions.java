@@ -132,6 +132,7 @@ public class FragmentOptions extends FragmentBase implements SharedPreferences.O
     @Override
     @Nullable
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         setSubtitle(R.string.title_advanced);
         setHasOptionsMenu(true);
 

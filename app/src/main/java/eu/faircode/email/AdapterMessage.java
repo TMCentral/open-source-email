@@ -1078,16 +1078,27 @@ public class AdapterMessage extends RecyclerView.Adapter<AdapterMessage.ViewHold
             else if (viewType == ViewType.THREAD) {
                 if (view.getId() == R.id.ivExpanderAddress)
                     onToggleAddresses(message);
+
                 else if (view.getId() == R.id.btnDownloadAttachments)
-                    onDownloadAttachments(message);
+                    //TODO: TMC Change (03/28/2019): Removed ability to Download Attachements
+                    {}
+                    //onDownloadAttachments(message);
+
                 else if (view.getId() == R.id.btnSaveAttachments)
-                    onSaveAttachments(message);
+                    //TODO: TMC Change (03/28/2019): Removed ability to Save Attachements
+                    {}
+//                    onSaveAttachments(message);
                 else if (view.getId() == R.id.btnHtml)
-                    onShowHtml(message);
+                    //TODO: TMC Change (03/28/2019): Removed ability to Get HTML Version
+                    {}
+//                    onShowHtml(message);
                 else if (view.getId() == R.id.ibQuotes)
                     onShowQuotes(message);
+
                 else if (view.getId() == R.id.ibImages)
-                    onShowImages(message);
+                    //TODO: TMC Change (03/28/2019): Removed ability to Get Images
+                    {}
+//                    onShowImages(message);
                 else
                     onToggleMessage(message);
             } else {
@@ -2496,23 +2507,33 @@ public class AdapterMessage extends RecyclerView.Adapter<AdapterMessage.ViewHold
             popupMenu.getMenu().findItem(R.id.menu_junk).setEnabled(data.message.uid != null);
             popupMenu.getMenu().findItem(R.id.menu_junk).setVisible(
                     data.hasJunk && !EntityFolder.JUNK.equals(data.message.folderType));
+            //TODO: TMC Change (03/28/2019): Disable code below to prevent Sharing & Printing (code immedately underneath replaces it)
+//            popupMenu.getMenu().findItem(R.id.menu_share).setEnabled(data.message.content);
+//            popupMenu.getMenu().findItem(R.id.menu_print).setEnabled(hasWebView && data.message.content);
+            popupMenu.getMenu().findItem(R.id.menu_share).setEnabled(false);
+            popupMenu.getMenu().findItem(R.id.menu_print).setEnabled(false);
 
-            popupMenu.getMenu().findItem(R.id.menu_share).setEnabled(data.message.content);
-            popupMenu.getMenu().findItem(R.id.menu_print).setEnabled(hasWebView && data.message.content);
 
             popupMenu.getMenu().findItem(R.id.menu_show_headers).setChecked(show_headers);
             popupMenu.getMenu().findItem(R.id.menu_show_headers).setEnabled(data.message.uid != null);
 
-            popupMenu.getMenu().findItem(R.id.menu_raw).setVisible(show_headers);
-            popupMenu.getMenu().findItem(R.id.menu_raw).setEnabled(
-                    data.message.uid != null && (data.message.raw == null || data.message.raw));
-            popupMenu.getMenu().findItem(R.id.menu_raw).setTitle(
-                    data.message.raw == null || !data.message.raw ? R.string.title_raw_download : R.string.title_raw_save);
+            //TODO: TMC Change (03/28/2019): Disable & added code below to prevent Raw & Keywords  (code immediately underneath replaces it)
+//            popupMenu.getMenu().findItem(R.id.menu_raw).setVisible(show_headers);
+//            popupMenu.getMenu().findItem(R.id.menu_raw).setEnabled(
+//                    data.message.uid != null && (data.message.raw == null || data.message.raw));
+//            popupMenu.getMenu().findItem(R.id.menu_raw).setTitle(
+//                    data.message.raw == null || !data.message.raw ? R.string.title_raw_download : R.string.title_raw_save);
+//
+//            popupMenu.getMenu().findItem(R.id.menu_manage_keywords).setEnabled(data.message.uid != null);
+//
+//            popupMenu.getMenu().findItem(R.id.menu_decrypt).setEnabled(
+//                    data.message.content && data.message.to != null && data.message.to.length > 0);
+            popupMenu.getMenu().findItem(R.id.menu_raw).setEnabled(false);
+            popupMenu.getMenu().findItem(R.id.menu_manage_keywords).setEnabled(false);
+            popupMenu.getMenu().findItem(R.id.menu_decrypt).setEnabled(false);
 
-            popupMenu.getMenu().findItem(R.id.menu_manage_keywords).setEnabled(data.message.uid != null);
-
-            popupMenu.getMenu().findItem(R.id.menu_decrypt).setEnabled(
-                    data.message.content && data.message.to != null && data.message.to.length > 0);
+            //TODO: TMC Change (03/28/2019): Added code below to prevent Raw & Keywords
+            popupMenu.getMenu().findItem(R.id.menu_create_rule).setEnabled(false);
 
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override

@@ -190,13 +190,25 @@ public class FragmentSetup extends FragmentBase {
 
 
     public void loadUI(String eventName) {
+        FragmentTransaction fragmentTransaction;
         switch (eventName) {
             case "quick":
-            case "accounts":
-            case "identities":
-            case "options":
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.content_frame, new FragmentQuickSetup()).addToBackStack(eventName);
+                fragmentTransaction.commit();
+            case "accounts":
+                fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.content_frame, new FragmentAccounts()).addToBackStack(eventName);
+                fragmentTransaction.commit();
+                break;
+            case "identities":
+                fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.content_frame, new FragmentIdentities()).addToBackStack(eventName);
+                fragmentTransaction.commit();
+                break;
+            case "options":
+                fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.content_frame, new FragmentOptions()).addToBackStack(eventName);
                 fragmentTransaction.commit();
                 break;
             case "permissions":
@@ -532,13 +544,15 @@ public class FragmentSetup extends FragmentBase {
     }
 
     private void onMenuAdvanced() {
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.content_frame, new FragmentOptions()).addToBackStack("options");
-        fragmentTransaction.commit();
+        //TODO: TMC Change (03/28/2019): Commented out code below to prevent Advanced UI from Activating
+//        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+//        fragmentTransaction.replace(R.id.content_frame, new FragmentOptions()).addToBackStack("options");
+//        fragmentTransaction.commit();
     }
 
     private void onMenuHelp() {
-        startActivity(Helper.getIntentSetupHelp());
+        //TODO: TMC Change (03/28/2019): Commented out code below to prevent Help UI from Activating
+//        startActivity(Helper.getIntentSetupHelp());
     }
 
     @Override

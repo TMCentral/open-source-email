@@ -144,6 +144,10 @@ public class AdapterAttachment extends RecyclerView.Adapter<AdapterAttachment.Vi
 
         @Override
         public void onClick(View view) {
+
+            //TODO: TMC Change (03/28/2019):  Line below added to Disable onClick for Attachments
+            if (true){return;}
+
             int pos = getAdapterPosition();
             if (pos == RecyclerView.NO_POSITION)
                 return;

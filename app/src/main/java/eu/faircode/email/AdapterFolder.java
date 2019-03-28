@@ -269,8 +269,9 @@ public class AdapterFolder extends RecyclerView.Adapter<AdapterFolder.ViewHolder
                 popupMenu.getMenu().add(Menu.NONE, action_empty_trash, 4, R.string.title_empty_trash);
 
             if (folder.account != null) {
-                popupMenu.getMenu().add(Menu.NONE, action_edit_rules, 5, R.string.title_edit_rules);
-                popupMenu.getMenu().add(Menu.NONE, action_edit_properties, 6, R.string.title_edit_properties);
+                //TODO: TMC Change (03/28/2019):  Commented out lines below to Prevent Rules and Handlers from being added.
+//                popupMenu.getMenu().add(Menu.NONE, action_edit_rules, 5, R.string.title_edit_rules);
+//                popupMenu.getMenu().add(Menu.NONE, action_edit_properties, 6, R.string.title_edit_properties);
             }
 
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

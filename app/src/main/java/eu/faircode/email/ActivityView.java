@@ -338,52 +338,49 @@ public class ActivityView extends ActivityBilling implements FragmentManager.OnB
                 }
 
                 items.add(new DrawerItem(-1));
-                items.add(new DrawerItem(-2, R.drawable.baseline_reply_24, R.string.menu_answers));
-
-                String title;
-                if (operations == 0)
-                    title = getString(R.string.menu_operations);
-                else
-                    title = getString(R.string.title_name_count,
-                            getString(R.string.menu_operations),
-                            nf.format(operations));
-                items.add(new DrawerItem(-3, R.string.menu_operations, R.drawable.baseline_list_24, title, operations > 0));
-
-                items.add(new DrawerItem(-4, R.drawable.baseline_person_24, R.string.menu_contacts));
+                //TODO: TMC Change (03/28/2019): Removed menu Items below
+                //items.add(new DrawerItem(-2, R.drawable.baseline_reply_24, R.string.menu_answers));
+                //String title;
+                //if (operations == 0)
+                //    title = getString(R.string.menu_operations);
+                //else
+                //title = getString(R.string.title_name_count, getString(R.string.menu_operations), nf.format(operations));
+                //items.add(new DrawerItem(-3, R.string.menu_operations, R.drawable.baseline_list_24, title, operations > 0));
+                //items.add(new DrawerItem(-4, R.drawable.baseline_person_24, R.string.menu_contacts));
                 items.add(new DrawerItem(-5, R.drawable.baseline_settings_applications_24, R.string.menu_setup));
                 items.add(new DrawerItem(-6));
-                items.add(new DrawerItem(-7, R.drawable.baseline_help_24, R.string.menu_legend));
+                //TODO: TMC Change (03/28/2019): Removed menu Items below
+                //items.add(new DrawerItem(-7, R.drawable.baseline_help_24, R.string.menu_legend));
+                //if (Helper.getIntentFAQ().resolveActivity(getPackageManager()) != null)
+                    //items.add(new DrawerItem(-8, R.drawable.baseline_question_answer_24, R.string.menu_faq));
 
-                if (Helper.getIntentFAQ().resolveActivity(getPackageManager()) != null)
-                    items.add(new DrawerItem(-8, R.drawable.baseline_question_answer_24, R.string.menu_faq));
+                //if (BuildConfig.BETA_RELEASE)
+                    //items.add(new DrawerItem(-9, R.drawable.baseline_report_problem_24, R.string.menu_issue));
 
-                if (BuildConfig.BETA_RELEASE)
-                    items.add(new DrawerItem(-9, R.drawable.baseline_report_problem_24, R.string.menu_issue));
+                //if (Helper.getIntentPrivacy().resolveActivity(getPackageManager()) != null)
+                    //items.add(new DrawerItem(-10, R.drawable.baseline_account_box_24, R.string.menu_privacy));
 
-                if (Helper.getIntentPrivacy().resolveActivity(getPackageManager()) != null)
-                    items.add(new DrawerItem(-10, R.drawable.baseline_account_box_24, R.string.menu_privacy));
-
-                items.add(new DrawerItem(-11, R.drawable.baseline_info_24, R.string.menu_about));
+                //items.add(new DrawerItem(-11, R.drawable.baseline_info_24, R.string.menu_about));
 
                 boolean pro = (getIntentPro() == null || getIntentPro().resolveActivity(getPackageManager()) != null);
                 boolean invite = (getIntentInvite().resolveActivity(getPackageManager()) != null);
                 boolean rate = (getIntentRate().resolveActivity(getPackageManager()) != null);
                 boolean other = (getIntentOtherApps().resolveActivity(getPackageManager()) != null);
+                //TODO: TMC Change (03/28/2019): Removed menu Items below
+                //if (pro || invite || rate || other)
+                //    items.add(new DrawerItem(-12));
 
-                if (pro || invite || rate || other)
-                    items.add(new DrawerItem(-12));
+                //if (pro)
+                //    items.add(new DrawerItem(-13, R.drawable.baseline_monetization_on_24, R.string.menu_pro));
 
-                if (pro)
-                    items.add(new DrawerItem(-13, R.drawable.baseline_monetization_on_24, R.string.menu_pro));
+                //if (invite)
+                 //   items.add(new DrawerItem(-14, R.drawable.baseline_people_24, R.string.menu_invite));
 
-                if (invite)
-                    items.add(new DrawerItem(-14, R.drawable.baseline_people_24, R.string.menu_invite));
+                //if (rate)
+                //    items.add(new DrawerItem(-15, R.drawable.baseline_star_24, R.string.menu_rate));
 
-                if (rate)
-                    items.add(new DrawerItem(-15, R.drawable.baseline_star_24, R.string.menu_rate));
-
-                if (other)
-                    items.add(new DrawerItem(-16, R.drawable.baseline_get_app_24, R.string.menu_other));
+                //if (other)
+                //    items.add(new DrawerItem(-16, R.drawable.baseline_get_app_24, R.string.menu_other));
 
                 drawerArray.set(items);
             }
@@ -681,6 +678,9 @@ public class ActivityView extends ActivityBilling implements FragmentManager.OnB
     }
 
     private void checkUpdate(boolean always) {
+        //TODO: TMC Change 03/28/2019: Added Return below (1st line) to prevent updates
+        if (true){return;}
+
         long now = new Date().getTime();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (!always && !prefs.getBoolean("updates", true))

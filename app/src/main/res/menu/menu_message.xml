@@ -51,5 +51,6 @@
 
     <item
         android:id="@+id/menu_raw"
+        android:enabled="false"
         android:title="@string/title_raw_download" />
 </menu>

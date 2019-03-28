@@ -963,9 +963,11 @@ public class Helper {
     }
 
     static boolean isPro(Context context) {
-        if (false && BuildConfig.DEBUG)
-            return true;
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("pro", false);
+        //TODO: TMC Change (03/28/2019):  Remove Pro check - always return True
+        return true;
+//        if (false && BuildConfig.DEBUG)
+//            return true;
+//        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("pro", false);
     }
 
     static long[] toLongArray(List<Long> list) {

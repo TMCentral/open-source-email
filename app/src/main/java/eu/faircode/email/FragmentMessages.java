@@ -54,6 +54,7 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -2539,6 +2540,10 @@ public class FragmentMessages extends FragmentBase {
     static void search(
             final Context context, final LifecycleOwner owner, final FragmentManager manager,
             long folder, String query) {
+        //TODO: TMC Change (03/28/2019):Added 2 Lines Below to Display Search in Messages)
+        Toast.makeText(context,"Search not Available!", Toast.LENGTH_SHORT).show();
+        if (true){return;}
+
         if (Helper.isPro(context)) {
             Bundle args = new Bundle();
             args.putLong("folder", folder);

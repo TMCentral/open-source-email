@@ -67,18 +67,18 @@ public class ActivityMain extends AppCompatActivity implements FragmentManager.O
                 protected void onExecuted(Bundle args, List<EntityAccount> accounts) {
                     if (accounts == null || accounts.size() == 0){
                         //TODO: Remove this for password Fragment
-                        adBuilder  = new AlertDialog.Builder(ActivityMain.this).create();
-                        adBuilder.setTitle("Please Provide Password");
-                        adBuilder.setMessage("Test this!");
-                        adBuilder.setIcon(R.drawable.baseline_navigate_next_24);
-                        adBuilder.setButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int which)
-                            {
-                                // Write your code here to execute after dialog    closed
-                                Toast.makeText(getApplicationContext(),"You clicked on OK", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        adBuilder.show();
+//                        adBuilder  = new AlertDialog.Builder(ActivityMain.this).create();
+//                        adBuilder.setTitle("Please Provide Password");
+//                        adBuilder.setMessage("Test this!");
+//                        adBuilder.setIcon(R.drawable.baseline_navigate_next_24);
+//                        adBuilder.setButton("OK", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog,int which)
+//                            {
+//                                // Write your code here to execute after dialog    closed
+//                                Toast.makeText(getApplicationContext(),"You clicked on OK", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                        adBuilder.show();
 
                         startActivity(new Intent(ActivityMain.this, ActivitySetup.class));
 

@@ -333,14 +333,17 @@ public class FragmentCompose extends FragmentBase {
                     case R.id.menu_italic:
                     case R.id.menu_clear:
                     case R.id.menu_link:
-                        onMenuStyle(item.getItemId());
-                        return true;
+                        //TODO: TMC Change (03/28/2019): Disabled ability to add Links
+//                      onMenuStyle(item.getItemId());
+//                      return true;
                     case R.id.menu_image:
-                        onMenuImage();
-                        return true;
+                        //TODO: TMC Change (03/28/2019): Disabled ability to add Images
+//                        onMenuImage();
+//                        return true;
                     case R.id.menu_attachment:
-                        onMenuAttachment();
-                        return true;
+                        //TODO: TMC Change (03/28/2019): Disabled ability to add Attachments
+//                        onMenuAttachment();
+//                        return true;
                     default:
                         return false;
                 }
