@@ -209,6 +209,8 @@ public class FragmentFolders extends FragmentBase {
         grpHintSync.setVisibility(prefs.getBoolean("folder_sync", false) ? View.GONE : View.VISIBLE);
 
         DB db = DB.getInstance(getContext());
+        //TODO: TMC Change (03/28/2019): Set the Add Folder Button hidden
+        fab.hide();
 
         // Observe account
         if (account < 0) {
@@ -222,8 +224,9 @@ public class FragmentFolders extends FragmentBase {
                         public void onChanged(List<TupleIdentityEx> identities) {
                             if (identities == null || identities.size() == 0)
                                 fab.hide();
-                            else
-                                fab.show();
+                            //TODO: TMC Change (03/28/2019): Commented out line below to keep Add Folder Hidden
+//                            else
+//                                fab.show();
                         }
                     });
         } else
@@ -233,8 +236,9 @@ public class FragmentFolders extends FragmentBase {
                     setSubtitle(account == null ? null : account.name);
                     if (account == null)
                         fab.hide();
-                    else
-                        fab.show();
+                    //TODO: TMC Change (03/28/2019): Commented out line below to keep Add Folder Hidden
+//                    else
+//                        fab.show();
                 }
             });
 

@@ -40,6 +40,7 @@ public class ActivityMain extends AppCompatActivity implements FragmentManager.O
     //TODO: Remove this for password Fragment
     private AlertDialog adBuilder;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getSupportFragmentManager().addOnBackStackChangedListener(this);

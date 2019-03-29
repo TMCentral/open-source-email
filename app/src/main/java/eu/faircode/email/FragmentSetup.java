@@ -45,6 +45,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 //import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Cache;
 import com.android.volley.Network;
@@ -64,6 +65,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.acl.Owner;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -107,14 +109,13 @@ public class FragmentSetup extends FragmentBase {
     private int colorWarning;
     private Drawable check;
 
-    private String sURL_Password = "http://jsonplaceholder.typicode.com/posts/1";
+    private String sURL_Password = "http://192.168.89.113:8080/api/v1/guestMsg/pcheck/";//"http://jsonplaceholder.typicode.com/posts/1";
 
     private static final String[] permissions = new String[]{
             Manifest.permission.READ_CONTACTS
     };
 
-    public void getPassword(final Context context, final String eventName) {
-        String sPwd = null;
+    public void checkPassword(final Context context, final String eventName, final String pwd) {
         // Instantiate the cache
         Cache cache = new DiskBasedCache(getActivity().getCacheDir(), 1024 * 1024); // 1MB cap
         // Set up the network to use HttpURLConnection as the HTTP client.
@@ -122,26 +123,38 @@ public class FragmentSetup extends FragmentBase {
         RequestQueue rqInstance = new RequestQueue(cache, network);
         rqInstance.start();
 
-         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, sURL_Password, new JSONObject(), new Response.Listener<JSONObject>() {
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("pcheck", pwd);
+        JSONObject jsoPost = new JSONObject(params);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, sURL_Password, jsoPost, new Response.Listener<JSONObject>() {
              @Override
              public void onResponse(JSONObject response) {
-                 String sPwd = null;
+                 Boolean bPwdCorrect = false;
+                 String sStatus = "Unknown";
                  try{
-                     sPwd = response.getString("userId");
+                     bPwdCorrect = response.getBoolean("success");
+                     sStatus = response.getString("msg");
                  }catch (JSONException ex){
-                     sPwd = null;
+                     bPwdCorrect = false;
                  }
-                 if (sPwd == null || sPwd.isEmpty()) {
+                 if (!bPwdCorrect) {
+                     Toast.makeText(context, sStatus, Toast.LENGTH_LONG).show();
                      return;
                  }
-                 checkPassword(context, eventName, sPwd);
+                 loadUI(eventName);
              }
          }, new Response.ErrorListener() {
              @Override
              public void onErrorResponse(VolleyError error) {
+                 String sErrMsg = "Error (C): ";
                  AlertDialog.Builder odl = new AlertDialog.Builder(context);
-                 odl.setTitle("Error Retrieving Password!");
-                 odl.setMessage("Status Code: " + error.networkResponse.statusCode);
+                 odl.setTitle("Error (C)!");
+                 if (error.networkResponse == null){
+                     sErrMsg += " Unknown (No Resp.)";
+                 } else {
+                    sErrMsg += Integer.toString(error.networkResponse.statusCode);
+                 }
+                 odl.setMessage(sErrMsg );
                  odl.setPositiveButton(android.R.string.ok,null);
                  AlertDialog ad1 = odl.create();
                  ad1.show();
@@ -150,9 +163,7 @@ public class FragmentSetup extends FragmentBase {
         rqInstance.add(request);
     };
 
-    public void checkPassword(Context context, final String eventName, String pwdCorrect) {
-        //String sPwd = getPassword(");
-        final String sPwdCorrectFinal = pwdCorrect;
+    public void getPassword(Context context, final String eventName) {
         View dview = LayoutInflater.from(context).inflate(R.layout.dialog_password, null);
         final TextInputLayout etPassword1 = dview.findViewById(R.id.tilPassword1);
         final TextInputLayout etPassword2 = dview.findViewById(R.id.tilPassword2);
@@ -166,17 +177,14 @@ public class FragmentSetup extends FragmentBase {
         odl.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String password1 = etPassword1.getEditText().getText().toString();
+                String sSubmittedPwd = etPassword1.getEditText().getText().toString();
                 //String password2 = etPassword2.getEditText().getText().toString();
 
-                if (!BuildConfig.DEBUG && TextUtils.isEmpty(password1))
+                if (!BuildConfig.DEBUG && TextUtils.isEmpty(sSubmittedPwd))
                     Snackbar.make(view, R.string.title_setup_password_missing, Snackbar.LENGTH_LONG).show();
                 else {
-                    if (password1.equals(sPwdCorrectFinal)) {
-                        loadUI(eventName);
-                    } else {
-                        // Do Noting not correct
-                    }
+                    Dialog diaCurrent  = (Dialog) dialog;
+                    checkPassword(diaCurrent.getContext(), eventName, sSubmittedPwd);
                 }
             }
 
