@@ -109,7 +109,7 @@ public class FragmentSetup extends FragmentBase {
     private int colorWarning;
     private Drawable check;
 
-    private String sURL_Password = "http://192.168.89.113:8080/api/v1/guestMsg/pcheck/";//"http://jsonplaceholder.typicode.com/posts/1";
+    private String sURL_Password = "http://guestmsg.tgho.net:8080/api/v1/guestMsg/pcheck/";//"http://jsonplaceholder.typicode.com/posts/1";
 
     private static final String[] permissions = new String[]{
             Manifest.permission.READ_CONTACTS

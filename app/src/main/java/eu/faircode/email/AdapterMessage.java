@@ -2782,8 +2782,11 @@ public class AdapterMessage extends RecyclerView.Adapter<AdapterMessage.ViewHold
                             onMenuReply(data, true);
                             return true;
                         case R.id.menu_reply_template:
-                            onMenuAnswer(data);
-                            return true;
+                            //TODO: TMC Change (04/02/2019): Commented out action and Added Toast and return below
+//                            onMenuAnswer(data);
+//                            return true;
+                            Toast.makeText(context,"Templates not Available!", Toast.LENGTH_SHORT).show();
+                            return false;
                         default:
                             return false;
                     }
@@ -2844,6 +2847,10 @@ public class AdapterMessage extends RecyclerView.Adapter<AdapterMessage.ViewHold
 
                 @Override
                 protected void onExecuted(Bundle args, List<EntityAnswer> answers) {
+                    //TODO: TMC Change (04/02/2019): Commented out action and Added Toast and return below
+                    Toast.makeText(context,"Reply Templates not Available!", Toast.LENGTH_SHORT).show();
+                    if (true) return;
+
                     if (answers == null || answers.size() == 0) {
                         Snackbar snackbar = Snackbar.make(
                                 itemView,

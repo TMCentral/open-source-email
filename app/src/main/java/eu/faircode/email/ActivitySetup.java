@@ -105,6 +105,13 @@ public class ActivitySetup extends ActivityBilling implements FragmentManager.On
     static final String ACTION_EDIT_ACCOUNT = BuildConfig.APPLICATION_ID + ".EDIT_ACCOUNT";
     static final String ACTION_EDIT_IDENTITY = BuildConfig.APPLICATION_ID + ".EDIT_IDENTITY";
 
+    //TODO: TMC Change (04/02/2019): Added onPause below
+    @Override
+    public void onStop(){
+        super.onStop();
+        finish();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
